@@ -13,24 +13,25 @@ public class Enemy : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        // Check if the object we hit is the Player
-        PlayerHealth player = other.GetComponent<PlayerHealth>();
+        // Check if hit by a Projectile
+        if (other.CompareTag("Projectile"))
+        {
+            // Add Score
+            FindObjectOfType<ScoreManager>().AddScore(5);
+            
+            // Destroy the bullet
+            Destroy(other.gameObject);
+            
+            // Destroy this enemy
+            Destroy(gameObject);
+            return; // Exit the function so we don't check for Player collision
+        }
 
+        // Check if hit by the Player
+        PlayerHealth player = other.GetComponent<PlayerHealth>();
         if (player != null)
         {
-            // Deal damage
             player.TakeDamage(damage);
-            
-            // Destroy the enemy so it doesn't hit us twice
-            Destroy(gameObject);
-        }
-    }
-
-    void Update()
-    {
-        // Destroy object if it goes off-screen to the left
-        if (transform.position.x < -10f)
-        {
             Destroy(gameObject);
         }
     }
